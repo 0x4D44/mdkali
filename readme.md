@@ -1,4 +1,4 @@
-# Audio Visualizer
+# mdkali - Audio Visualizer
 
 A sophisticated Python-based audio visualization tool that converts audio files into stunning visual representations. This project offers multiple visualization styles and supports both MP3 and WAV audio formats.
 
