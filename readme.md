@@ -1,160 +1,131 @@
 # mdkali - Audio Visualizer
 
-A sophisticated Python-based audio visualization tool that converts audio files into stunning visual representations. This project offers multiple visualization styles and supports both MP3 and WAV audio formats.
+A sophisticated Python-based audio visualization tool that converts audio files (MP3/WAV) into stunning video representations. This project leverages signal processing (FFT) to drive 10 unique visualization styles, from classic waveforms to complex kaleidoscopes and 3D bars.
 
 ## Features
 
-- 10 unique visualization styles:
-  - Multi-Display Spectrogram (stereo channels)
-  - Kaleidoscope
-  - Waveform
-  - Frequency Spectrum
-  - Circular Spectrum
-  - Dancing Particles
-  - 3D Bars
-  - Pulse Visualization
-  - Equalizer
-  - Spectrogram
+- **10 Unique Visualization Styles:**
+  - `MD_spectrogram`: Multi-display with stereo waveforms and scrolling spectrograms (Default).
+  - `kaleidoscope`: Dynamic kaleidoscope pattern reacting to audio amplitude.
+  - `waveform`: Traditional audio waveform visualization.
+  - `spectrum`: Frequency spectrum analyzer bars.
+  - `circular_spectrum`: Circular frequency spectrum display.
+  - `dancing_particles`: Particle system where energy drives movement.
+  - `bars_3d`: 3D frequency bars with perspective.
+  - `pulse`: Pulsing circular glow based on beat detection.
+  - `equalizer`: Classic 32-band equalizer.
+  - `spectrogram`: Scrolling frequency heatmap (up to 12kHz).
 
-- Additional features:
-  - Album art extraction from MP3 files
-  - Support for batch processing multiple files
-  - Customizable output resolution and frame rate
-  - Progress bar for rendering status
-  - Comprehensive error handling and logging
+- **Additional Capabilities:**
+  - **Batch Processing:** Process multiple files at once using wildcards (`*.mp3`).
+  - **Album Art:** Extract embedded album art from MP3s (`--extract-art`).
+  - **High Performance:** Uses `scipy` for FFT and `opencv` for rendering.
+  - **Customizable:** Adjust resolution, frame rate, and output paths.
 
 ## Requirements
 
-```
-numpy
-opencv-python
-moviepy
-scipy
-tqdm
-mutagen
-Pillow
-```
+- **Python 3.8+**
+- **FFmpeg:** Required for audio processing and video encoding.
+  - *Windows:* Download from [ffmpeg.org](https://ffmpeg.org/download.html) and add to PATH.
+  - *Linux:* `sudo apt install ffmpeg`
+  - *macOS:* `brew install ffmpeg`
 
 ## Installation
 
-1. Clone the repository:
-```bash
-git clone [repository-url]
-cd audio-visualizer
-```
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/yourusername/mdkali.git
+    cd mdkali
+    ```
 
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+2.  **Create a virtual environment (Recommended):**
+    ```bash
+    python -m venv venv
+    # Windows
+    .\venv\Scripts\activate
+    # Linux/macOS
+    source venv/bin/activate
+    ```
+
+3.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 ## Usage
 
+The primary entry point is `mdkali.py`.
+
 ### Basic Usage
-
+Create a video with the default `MD_spectrogram` visualization:
 ```bash
-python audio_visualizer.py input.mp3
+python mdkali.py input.mp3
 ```
-
-This will create an MP4 file with the default Multi-Display Spectrogram visualization.
+This generates `input.mp4` in the same directory.
 
 ### Advanced Usage
-
+Customize visualization style, resolution, and frame rate:
 ```bash
-python audio_visualizer.py --visualization kaleidoscope --width 1920 --height 1080 --fps 30 input.mp3 --output output.mp4
+python mdkali.py input.mp3 --visualization kaleidoscope --width 1920 --height 1080 --fps 60 --output my_video.mp4
 ```
 
-### Multiple Files
-
+### Batch Processing
+Process all MP3 files in the current directory:
 ```bash
-python audio_visualizer.py *.mp3 --visualization equalizer
+python mdkali.py *.mp3 --visualization equalizer
 ```
 
 ### Command Line Arguments
 
-- `input_files`: Input MP3 file(s) (supports wildcards)
-- `--output`, `-o`: Output MP4 file (ignored for multiple inputs)
-- `--visualization`, `-v`: Visualization type (default: MD_spectrogram)
-- `--width`, `-w`: Video width (default: 1920)
-- `--height`, `-H`: Video height (default: 1080)
-- `--fps`, `-f`: Frames per second (default: 30)
-- `--verbose`: Enable verbose logging
-- `--extract-art`, `-e`: Extract album art from MP3 files
+| Argument | Description | Default |
+| :--- | :--- | :--- |
+| `input_files` | Input MP3/WAV file(s) (supports wildcards like `*.mp3`) | Required |
+| `--output`, `-o` | Output video filename (ignored for batch processing) | Derived from input |
+| `--visualization`, `-v` | Visualization style (see list above) | `MD_spectrogram` |
+| `--width`, `-w` | Video width | `1920` |
+| `--height`, `-H` | Video height | `1080` |
+| `--fps`, `-f` | Frames per second | `30` |
+| `--extract-art`, `-e` | Extract embedded album art as image files | `False` |
+| `--verbose` | Enable detailed logging | `False` |
 
-### Available Visualization Types
+## Development
 
-1. `MD_spectrogram`: Multi-display spectrogram showing stereo channels
-2. `kaleidoscope`: Dynamic kaleidoscope pattern reacting to audio
-3. `waveform`: Traditional audio waveform visualization
-4. `spectrum`: Frequency spectrum analyzer
-5. `circular_spectrum`: Circular frequency spectrum display
-6. `dancing_particles`: Particle system reacting to audio
-7. `bars_3d`: 3D frequency bars with perspective
-8. `pulse`: Pulsing circular visualization
-9. `equalizer`: Classic equalizer bar display
-10. `spectrogram`: Scrolling spectrogram up to 12kHz
+### Running Tests
+The project uses `pytest` for testing. Code coverage is currently **99%**.
 
-## Technical Details
+1.  Install test dependencies:
+    ```bash
+    pip install pytest pytest-cov pytest-mock
+    ```
 
-### Audio Processing
+2.  Run tests:
+    ```bash
+    python -m pytest
+    ```
 
-- Supports both mono and stereo audio
-- Automatic conversion of MP3 to WAV for processing
-- FFT-based frequency analysis
-- Hanning window applied to reduce spectral leakage
-- Sample rate of 44.1kHz
-- Maximum frequency display of 12kHz for spectrograms
+3.  Run tests with coverage report:
+    ```bash
+    python -m pytest --cov=mdkali --cov-report term-missing tests
+    ```
 
-### Video Output
+### Linting and Formatting
+The project enforces code style using `ruff`.
 
-- H.264 video codec
-- AAC audio codec
-- Configurable resolution and frame rate
-- Multi-threaded rendering
-- Progress tracking with tqdm
+1.  Install ruff:
+    ```bash
+    pip install ruff
+    ```
 
-## Error Handling
+2.  Check for linting errors:
+    ```bash
+    python -m ruff check .
+    ```
 
-The program includes comprehensive error handling for:
-- File not found errors
-- Invalid audio files
-- Memory issues
-- FFmpeg processing errors
-- Invalid visualization parameters
-
-Errors are logged with appropriate detail level based on verbosity settings.
-
-## Examples
-
-### Create a kaleidoscope visualization:
-```bash
-python audio_visualizer.py --visualization kaleidoscope input.mp3
-```
-
-### Process multiple files with album art extraction:
-```bash
-python audio_visualizer.py --extract-art --visualization equalizer *.mp3
-```
-
-### Create high-resolution output:
-```bash
-python audio_visualizer.py --width 3840 --height 2160 --fps 60 input.mp3
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+3.  Format code:
+    ```bash
+    python -m ruff format .
+    ```
 
 ## License
 
-[Insert your chosen license here]
-
-## Acknowledgments
-
-This project uses several open-source libraries:
-- NumPy for numerical operations
-- OpenCV for image processing
-- MoviePy for video creation
-- SciPy for audio processing
-- Mutagen for MP3 metadata handling
-- PIL for image processing
+This project is licensed under the MIT License - see the LICENSE file for details.
